@@ -1,4 +1,4 @@
-# 3DPixelCNN
+# Bayesian 3DPixelCNN
 
 This repository contains the code used for the Bayesian 3DPixelCNN model used in
 [Bayesian Volumetric Autoregressive generative models for better semisupervised learning](https://arxiv.org/abs/1907.11559) paper.
