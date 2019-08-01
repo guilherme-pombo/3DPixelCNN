@@ -72,21 +72,23 @@ class GatedCNN3D(object):
 
 class PixelCNN3D(object):
 
-    def __init__(self, input_size, nb_channels=1, nb_pixelcnn_layers=13, nb_filters=128, filter_size_1st=(7, 7, 7),
+    def __init__(self, input_size, nb_channels=1, nb_pixelcnn_layers=13, nb_filters=128, filter_size_1st=(3, 3, 3),
                  filter_size=(3, 3, 3), optimizer='adam', es_patience=100, save_root='/tmp/pixelcnn',
                  dropout_rate=0.2, training_dropout=True):
         '''
         Args:
-            input_size ((int,int))      : (height, width) pixels of input images
-            nb_channels (int)           : Number of channels for input images. (1 for grayscale images, 3 for color images)
-            nb_pixelcnn_layers (int)    : Number of layers (except last two ReLu layers). (default:13)
-            nb_filters (int)            : Number of filters (feature maps) for each layer. (default:128)
-            filter_size_1st ((int, int)): Kernel size for the first layer. (default: (7,7))
-            filter_size ((int, int))    : Kernel size for the subsequent layers. (default: (3,3))
-            optimizer (str)             : SGD optimizer (default: 'adadelta')
-            es_patience (int)           : Number of epochs with no improvement after which training will be stopped (EarlyStopping)
-            save_root (str)             : Root directory to which {trained model file, parameter.txt, tensorboard log file} are saved
-            save_best_only (bool)       : if True, the latest best model will not be overwritten (default: False)
+            input_size ((int,int,int))      : (height, width, depth) pixels of input images
+            nb_channels (int)               : Number of channels for input images. (1 for grayscale images, 3 for color images)
+            nb_pixelcnn_layers (int)        : Number of layers (except last two ReLu layers). (default:13)
+            nb_filters (int)                : Number of filters (feature maps) for each layer. (default:128)
+            filter_size_1st ((int, int,int)): Kernel size for the first layer. (default: (7,7,7))
+            filter_size ((int, int,int))    : Kernel size for the subsequent layers. (default: (3,3,3))
+            optimizer (str)                 : SGD optimizer (default: 'adam')
+            es_patience (int)               : Number of epochs with no improvement after which training will be stopped (EarlyStopping)
+            save_root (str)                 : Root directory to which {trained model file, parameter.txt, tensorboard log file} are saved
+            save_best_only (bool)           : if True, the latest best model will not be overwritten (default: False)
+            dropout_rate (float)            : what rate of feature channels to drop with SpatialDropout
+            training_dropout (bool)         : Whether or not to use dropout. Leave this on to do Bayesian Inference at test time
         '''
         K.set_image_dim_ordering('tf')
 
@@ -263,7 +265,6 @@ class PixelCNN3D(object):
         return res
 
     def build_model(self):
-        ''' build conditional PixelCNN model '''
         if self.nb_channels == 1:
             input_img = Input(shape=(self.input_size[0], self.input_size[1], self.input_size[2], 1),
                               name='grayscale_image')
